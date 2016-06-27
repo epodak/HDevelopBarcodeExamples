@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="12.0.1">
+<procedure name="main">
+<interface/>
+<body>
+<c>* 1D_barcode_test.hdev</c>
+<c></c>
+<l>dev_set_draw ('margin')</l>
+<l>dev_update_window ('off')</l>
+<l>dev_set_line_width (2)</l>
+<c></c>
+<l>codeType := 'Code 128'</l>
+<l>*codeType := 'auto'</l>
+<c></c>
+<l>read_image(imgOriginal, 'Default1.png')</l>
+<l>get_image_size(imgOriginal, imageWidth, imageHeight)</l>
+<c></c>
+<c>* sharpen image</c>
+<l>emphasize(imgOriginal, imgOriginal, 7, 7, 1)</l>
+<c></c>
+<c>* convert to grayscale, Otsu thresh, then convert region back to an image</c>
+<l>rgb1_to_gray(imgOriginal, imgOriginal)</l>
+<l>binary_threshold(imgOriginal, regThresh, 'max_separability', 'light', UsedThreshold)</l>
+<l>region_to_bin(regThresh, imgOriginal, 255, 0, imageWidth, imageHeight)</l>
+<c></c>
+<c>* can rotate or scale with this if needed</c>
+<l>* hom_mat2d_identity(homMat2D)</l>
+<l>* hom_mat2d_rotate(homMat2D, rad(-40), imageWidth / 2, imageHeight / 2, homMat2D)</l>
+<l>* hom_mat2d_scale(homMat2D, 0.5, 0.5, 0, 0, homMat2D)</l>
+<l>* affine_trans_image(imgOriginal, imgOriginal, homMat2D, 'bilinear', 'true')</l>
+<c></c>
+<c>* use this to un-over-expose the image if necessary</c>
+<l>*scale_image_range(imgOriginal, imgOriginal, [ 0, 0 ], [ 255, 225 ])</l>
+<c></c>
+<c>* instantiate the bar code model</c>
+<l>create_bar_code_model([], [], barCodeHandle)</l>
+<c></c>
+<c>* various bar code params if needed . . .</c>
+<l>set_bar_code_param(barCodeHandle, 'persistence', 1)</l>
+<l>* set_bar_code_param(barCodeHandle, 'element_size_min', 1.0)</l>
+<l>* set_bar_code_param(barCodeHandle, 'num_scanlines', 2)</l>
+<l>* set_bar_code_param(barCodeHandle, 'element_size_max', 20.0)</l>
+<l>* set_bar_code_param(barCodeHandle, 'majority_voting', 'true')</l>
+<l>* set_bar_code_param(barCodeHandle, 'meas_param_estimation', 'true')</l>
+<l>* set_bar_code_param(barCodeHandle, 'start_stop_tolerance', 'low')</l>
+<c></c>
+<l>dev_close_window()</l>
+<l>dev_open_window(50, 300, imageWidth / 2, imageHeight / 2, 'black', windowHandle)</l>
+<c></c>
+<l>set_display_font(windowHandle, 14, 'mono', 'true', 'false')</l>
+<l>dev_display(imgOriginal)</l>
+<l>dev_set_color('green')</l>
+<c></c>
+<l>find_bar_code(imgOriginal, barCodeRegions, barCodeHandle, codeType, decodedDataStrings)</l>
+<c></c>
+<l>dev_set_color('green')</l>
+<l>dev_display(barCodeRegions)</l>
+<l>codeIsReadable := decodedDataStrings != []</l>
+<l>if(codeIsReadable)</l>
+<l>    disp_message(windowHandle, 'Code:' + decodedDataStrings, 'window', 32, 12, 'forest green', 'true')</l>
+<l>else</l>
+<l>    disp_message(windowHandle, 'Code: not readable', 'window', 32, 12, 'red', 'true')</l>
+<l>endif</l>
+<l>disp_continue_message(windowHandle, 'black', 'true')</l>
+<c></c>
+<l>get_bar_code_object(candidateRegions, barCodeHandle, 'all', 'candidate_regions')</l>
+<l>count_obj(candidateRegions, numberCandidates)</l>
+<l>if (numberCandidates == 0)</l>
+<l>    disp_message(windowHandle, 'No candidates found', 'window', 32, 12, 'red', 'true')</l>
+<l>else</l>
+<l>    dev_set_color ('magenta')</l>
+<l>    dev_display (candidateRegions)</l>
+<l>    disp_message(windowHandle, 'candidateRegions: ' + numberCandidates, 'window', 52, 12, 'magenta', 'true')</l>
+<l>endif</l>
+<c></c>
+<l>get_bar_code_result(barCodeHandle, 'all', 'decoded_types', decodedTypes)</l>
+<l>get_bar_code_result(barCodeHandle, 0, 'status', status0)</l>
+<c></c>
+<l>if (|decodedTypes| == 0)</l>
+<l>    get_bar_code_object(allScanlines, barCodeHandle, 'all', 'scanlines_all')</l>
+<l>    dev_set_color('red')</l>
+<l>    dev_display(allScanlines)</l>
+<l>    disp_message (windowHandle, 'No valid scanlines found', 'window', 72, 12, 'red', 'true')</l>
+<l>else</l>
+<l>    get_bar_code_object (validScanlines, barCodeHandle, 0, 'scanlines_valid')</l>
+<l>    dev_set_color('green')</l>
+<l>    dev_display(validScanlines)</l>
+<l>    disp_message(windowHandle, 'Valid scanlines detected', 'window', 72, 12, 'forest green', 'true')</l>
+<l>endif</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
