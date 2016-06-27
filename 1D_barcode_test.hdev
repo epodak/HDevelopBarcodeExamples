@@ -12,22 +12,24 @@
 <l>codeType := 'Code 128'</l>
 <l>*codeType := 'auto'</l>
 <c></c>
-<l>read_image(imgOriginal, 'Default1.png')</l>
+<l>read_image(imgOriginal, '20160624_115458.png')</l>
 <l>get_image_size(imgOriginal, imageWidth, imageHeight)</l>
 <c></c>
 <c>* sharpen image</c>
 <l>emphasize(imgOriginal, imgOriginal, 7, 7, 1)</l>
 <c></c>
-<c>* convert to grayscale, Otsu thresh, then convert region back to an image</c>
+<c>* convert to grayscale, Otsu thresh to a region, morph. op. to fill holes, then convert region back to an image</c>
 <l>rgb1_to_gray(imgOriginal, imgOriginal)</l>
 <l>binary_threshold(imgOriginal, regThresh, 'max_separability', 'light', UsedThreshold)</l>
+<l>erosion_rectangle1(regThresh, regThresh, 3, 3)</l>
+<l>dilation_rectangle1(regThresh, regThresh, 3, 3)</l>
 <l>region_to_bin(regThresh, imgOriginal, 255, 0, imageWidth, imageHeight)</l>
 <c></c>
 <c>* can rotate or scale with this if needed</c>
-<l>* hom_mat2d_identity(homMat2D)</l>
-<l>* hom_mat2d_rotate(homMat2D, rad(-40), imageWidth / 2, imageHeight / 2, homMat2D)</l>
-<l>* hom_mat2d_scale(homMat2D, 0.5, 0.5, 0, 0, homMat2D)</l>
-<l>* affine_trans_image(imgOriginal, imgOriginal, homMat2D, 'bilinear', 'true')</l>
+<l>hom_mat2d_identity(homMat2D)</l>
+<l>*hom_mat2d_rotate(homMat2D, rad(-40), imageWidth / 2, imageHeight / 2, homMat2D)</l>
+<l>hom_mat2d_scale(homMat2D, 0.5, 0.5, 0, 0, homMat2D)</l>
+<l>affine_trans_image(imgOriginal, imgOriginal, homMat2D, 'bilinear', 'true')</l>
 <c></c>
 <c>* use this to un-over-expose the image if necessary</c>
 <l>*scale_image_range(imgOriginal, imgOriginal, [ 0, 0 ], [ 255, 225 ])</l>
@@ -87,17 +89,6 @@
 <l>    dev_display(validScanlines)</l>
 <l>    disp_message(windowHandle, 'Valid scanlines detected', 'window', 72, 12, 'forest green', 'true')</l>
 <l>endif</l>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
 <c></c>
 <c></c>
 </body>
