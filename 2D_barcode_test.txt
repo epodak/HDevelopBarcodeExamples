@@ -1,0 +1,19 @@
+* 2D_barcode_test.hdev
+
+read_image(imgOriginal, '20160627_143317.png')
+
+* sharpen image
+*emphasize(imgOriginal, imgOriginal, 7, 7, 1)
+
+create_data_code_2d_model('Data Matrix ECC 200', [], [], dataCodeHandle)
+
+set_data_code_2d_param(dataCodeHandle, 'default_parameters', 'maximum_recognition')
+
+find_data_code_2d(imgOriginal, dataCodeBoundingContours, dataCodeHandle, [], [], resultHandles, decodedDataStrings)
+
+
+
+
+
+
+
